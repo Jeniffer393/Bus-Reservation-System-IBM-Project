@@ -1,19 +1,24 @@
 package com.bus.ibm.project.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.bus.ibm.project.exception.BusNotFoundException;
+import com.bus.ibm.project.exception.NoseatsBookedException;
 import com.bus.ibm.project.model.Booking;
 import com.bus.ibm.project.model.Bus;
 import com.bus.ibm.project.model.BusRouteDetails;
+import com.bus.ibm.project.model.BusSeatDetails;
 import com.bus.ibm.project.model.TravellerDetails;
 import com.bus.ibm.project.model.User;
 import com.bus.ibm.project.repository.BookingRepository;
 import com.bus.ibm.project.repository.BusRepository;
 import com.bus.ibm.project.repository.BusRouteRepository;
+import com.bus.ibm.project.repository.BusSeatDetailsRepository;
 import com.bus.ibm.project.repository.RouteRepository;
 import com.bus.ibm.project.repository.TravellerRepository;
 import com.bus.ibm.project.repository.UserRepository;
@@ -32,14 +37,40 @@ public class UserService {
 	TravellerRepository travellerRepo;
 	@Autowired
 	BusRouteRepository busRouteRepo;
+	@Autowired
+	BusSeatDetailsRepository busSeatRepo;
 	
 	//searching the bus based on user values
-     public List<BusRouteDetails>	getBuses(String from,String to){
-		   String routeId=routeRepo.getRouteId(from, to);
-		   return  busRouteRepo.findByRouteRouteId(routeId);          
+     public List<BusRouteDetails>	getBuses(String from,String to) throws BusNotFoundException{
+    	    try {
+		    String routeId=routeRepo.getRouteId(from, to);
+		    List<BusRouteDetails> busRouteDetails= busRouteRepo.findByRouteRouteId(routeId);
+		    if(busRouteDetails.isEmpty()) {
+		    	throw new BusNotFoundException("Sorry we dont have buses in this route");
+		    }else {
+		    	
+		          return busRouteDetails;
+		    }
+		    }catch(org.springframework.dao.EmptyResultDataAccessException exception) {
+		    	throw new BusNotFoundException("Sorry we dont have buses in this route");
+		    }
+    	 
+    	 
 	}
-    
-    public String bookSeats(String userId,Booking booking,String busId) {
+     
+     public BusSeatDetails searchSeats(int busRouteId) throws NoseatsBookedException {
+    	  BusSeatDetails existingBusSeatDetails=busSeatRepo.findByBusRouteDetailsBusRouteId(busRouteId);
+    	  if(existingBusSeatDetails==null) {
+    		  throw new NoseatsBookedException("Seats are empty \n");
+    		  		                        
+    	  }else {
+    		  return existingBusSeatDetails;
+    	  }
+    	  
+    	 
+     }
+
+   /* public String bookSeats(String userId,Booking booking,String busId) {
     	//just to demonstrate
     	User user=new User();
     	user.setUserId(userId);
@@ -93,7 +124,9 @@ public class UserService {
     	  travellerRepo.saveAll(travellers);
     	  return bookingId;
     	  
-    }
+    }*/
+    
+     
     
        
 }

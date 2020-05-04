@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.bus.ibm.project.exception.BusRouteException;
 import com.bus.ibm.project.model.BusRouteDetails;
 import com.bus.ibm.project.repository.BusRouteRepository;
 
@@ -16,9 +17,16 @@ public class BusRouteService {
 	BusRouteRepository  busRouteRepo;;
 
 	
-	public void addBusToRoute(BusRouteDetails busRouteDetails){
+	public void addBusToRoute(BusRouteDetails busRouteDetails) throws BusRouteException{
+		
+		BusRouteDetails existingBusRouteDetails=busRouteRepo.searchBusRoute(busRouteDetails.getBus().getBusId(), busRouteDetails.getRoute().getRouteId());
+		if(existingBusRouteDetails!=null) {
+			throw new BusRouteException("Bus Id with "+busRouteDetails.getBus().getBusId()+ " is already assigned  a route with routeId"+busRouteDetails.getRoute().getRouteId());
+		}else {
 		busRouteRepo.save(busRouteDetails);
-	}
+
+		}
+	}	
 	
 	public  Iterable<BusRouteDetails> getAllActiveBuses(){
 	return busRouteRepo.findAll();

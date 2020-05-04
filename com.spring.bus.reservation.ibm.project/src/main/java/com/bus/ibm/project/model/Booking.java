@@ -45,7 +45,7 @@ public class Booking {
 	private Timestamp bookedDate;
 	
 	@JsonFormat(pattern = "DD/MM/YYYY")
-	private String travellingDate;
+	private Date travellingDate;
 	
 	@NotNull
 	@NotEmpty
@@ -100,11 +100,11 @@ public class Booking {
 		this.bookedDate = bookedDate;
 	}
 
-	public String getTravellingDate() {
+	public Date getTravellingDate() {
 		return travellingDate;
 	}
 
-	public void setTravellingDate(String travellingDate) {
+	public void setTravellingDate(Date travellingDate) {
 		this.travellingDate = travellingDate;
 	}
 
@@ -150,7 +150,7 @@ public class Booking {
 	
 	
 
-	public Booking(String bookingId, Timestamp bookedDate, String travellingDate, @NotEmpty String pickUpPoint,
+	public Booking(String bookingId, Timestamp bookedDate, Date travellingDate, @NotEmpty String pickUpPoint,
 			@NotEmpty String droppingPoint, double totalFare, int bookedSeats) {
 		this.bookingId = bookingId;
 		this.bookedDate = bookedDate;

@@ -3,12 +3,14 @@ package com.bus.ibm.project.model;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotEmpty;
 
+import org.hibernate.annotations.Check;
 import org.hibernate.validator.constraints.NotBlank;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -23,6 +25,7 @@ public class Agency {
 	
 	@NotNull
 	@NotEmpty
+	@Column(unique = true)
 	private String agencyName;
 	
 	@OneToMany(mappedBy = "agency")

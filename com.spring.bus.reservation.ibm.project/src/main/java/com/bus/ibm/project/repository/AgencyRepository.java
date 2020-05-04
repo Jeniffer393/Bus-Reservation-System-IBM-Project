@@ -8,5 +8,5 @@ import com.bus.ibm.project.model.Agency;
 
 public interface AgencyRepository  extends CrudRepository<Agency,String>{
     List<Agency> findAll();
-    
+    Agency findByAgencyName(String agencyName);    
 }

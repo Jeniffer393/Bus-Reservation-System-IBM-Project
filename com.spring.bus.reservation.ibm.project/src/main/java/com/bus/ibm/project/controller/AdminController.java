@@ -6,6 +6,7 @@ import java.util.Optional;
 import javax.validation.GroupSequence;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,16 +16,25 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.bus.ibm.project.exception.AddAgencyException;
+import com.bus.ibm.project.exception.AgencyAlreadyExistsException;
+import com.bus.ibm.project.exception.BusAlreadyExistsException;
+import com.bus.ibm.project.exception.BusRouteException;
+import com.bus.ibm.project.exception.RouteAlreadyExistsException;
 import com.bus.ibm.project.model.Agency;
 import com.bus.ibm.project.model.Bus;
 import com.bus.ibm.project.model.BusRouteDetails;
+import com.bus.ibm.project.model.BusSeatDetails;
 import com.bus.ibm.project.model.Route;
 import com.bus.ibm.project.service.AgencyService;
 import com.bus.ibm.project.service.BusRouteService;
+import com.bus.ibm.project.service.BusSeatDetailsService;
 import com.bus.ibm.project.service.BusService;
 import com.bus.ibm.project.service.RouteService;
 
 @RestController
+@CrossOrigin(origins = "*",allowedHeaders="*")
+@RequestMapping("/admin")
 public class AdminController {
 	@Autowired 
 	BusService    service;
@@ -34,10 +44,17 @@ public class AdminController {
 	AgencyService agencyService;
 	@Autowired
 	BusRouteService busRouteService;
+	@Autowired
+	BusSeatDetailsService busSeatDetailsService;
 	//adding the bus
 	@PostMapping("/addbus")
-	void  addBus(@RequestBody Bus bus) {
-		  service.addBus(bus);
+	void  addBus(@RequestBody Bus bus) throws BusAlreadyExistsException, AddAgencyException {
+		try {
+		service.addBus(bus);
+		}catch(AddAgencyException exception) {
+			throw new AddAgencyException("agency is not found");
+		}
+
 		
 	}
 	//getting the busbyId
@@ -53,7 +70,7 @@ public class AdminController {
 	
 	//adding the route
 	@PostMapping("/route")
-	String addRoute(@RequestBody Route route){
+	String addRoute(@RequestBody Route route) throws RouteAlreadyExistsException{
 		 return routeService.addRoute(route);
 	 }
 	//getting all the routes
@@ -63,7 +80,7 @@ public class AdminController {
 	}
 	//adding the agency
 	@PostMapping("/agency")
-	 String addAgency(@RequestBody Agency agency){
+	 String addAgency(@RequestBody Agency agency) throws AgencyAlreadyExistsException{
 		return agencyService.addAgency(agency);
 	}
 	//get the agencyList
@@ -73,7 +90,7 @@ public class AdminController {
 	}
 	//adding the route to bus
 	@PostMapping("/busRoute")
-	void addBusToRoute(@RequestBody BusRouteDetails busRoute){
+	void addBusToRoute(@RequestBody BusRouteDetails busRoute) throws BusRouteException{
 		busRouteService.addBusToRoute(busRoute);
 	}
 	//get the allactive buses
@@ -102,4 +119,11 @@ public class AdminController {
 	 void updateRouteOfBus(@RequestBody Iterable<BusRouteDetails> busRouteDetails) {
 		busRouteService.updateRouteOfBus(busRouteDetails);
 	}
+	//getbookedseatsofbus
+	
+	 @GetMapping("/seatsbooked")
+	 Iterable<BusSeatDetails> getBookedSeatsOfbus(){
+		return  busSeatDetailsService.getBookedSeatsOfBus();
+	 }
+	 
 }

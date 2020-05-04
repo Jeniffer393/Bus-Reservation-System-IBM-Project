@@ -19,7 +19,7 @@ public class TravellerDetails {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private int travellerId;
-	private int seatNo;
+	private String  seatNo;
 	@ManyToOne
 	@JoinColumn(name="booking_id")
 	private Booking booking;
@@ -38,14 +38,17 @@ public class TravellerDetails {
 	@Check(constraints = "CHECK gender IN('Male','Female')")
 	private String gender;
 	
+	private int age;
 	
-	public TravellerDetails(int seatNo, @NotNull @NotEmpty String travellerName,
-			@NotEmpty @NotNull String travellerPhoneNo, @NotEmpty @NotNull String gender) {
+	
+	public TravellerDetails(String seatNo, @NotNull @NotEmpty String travellerName,
+			@NotEmpty @NotNull String travellerPhoneNo, @NotEmpty @NotNull String gender,int age) {
 		super();
 		this.seatNo = seatNo;
 		this.travellerName = travellerName;
 		this.travellerPhoneNo = travellerPhoneNo;
 		this.gender = gender;
+		this.age=age;
 	}
 
 
@@ -54,12 +57,14 @@ public class TravellerDetails {
 	}
 
 
-	public int getSeatNo() {
+	
+
+	public String getSeatNo() {
 		return seatNo;
 	}
 
 
-	public void setSeatNo(int seatNo) {
+	public void setSeatNo(String seatNo) {
 		this.seatNo = seatNo;
 	}
 
@@ -102,5 +107,20 @@ public class TravellerDetails {
 	public void setGender(String gender) {
 		this.gender = gender;
 	}
+
+
+	public int getAge() {
+		return age;
+	}
+
+
+	public void setAge(int age) {
+		this.age = age;
+	}
+
+
+	
+
+	
 
 }

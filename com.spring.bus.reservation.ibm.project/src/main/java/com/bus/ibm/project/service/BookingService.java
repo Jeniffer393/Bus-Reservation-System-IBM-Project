@@ -1,18 +1,25 @@
 package com.bus.ibm.project.service;
 
+import java.io.IOException;
+import java.sql.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.Properties;
 
 import javax.mail.Message;
+import javax.mail.MessagingException;
 import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.bus.ibm.project.exception.SameSeatException;
+import com.bus.ibm.project.exception.SeatBookedException;
 import com.bus.ibm.project.model.Booking;
 import com.bus.ibm.project.model.Bus;
 import com.bus.ibm.project.model.Route;
@@ -37,6 +44,8 @@ public class BookingService {
 	UserRepository    userRepo;
 	@Autowired
 	TravellerRepository travellerRepo;
+	@Autowired
+	BusSeatDetailsService busSeatDetailsService;
 	
 	   
     public String bookSeats(String userId,Booking booking,String busId) {
@@ -55,7 +64,7 @@ public class BookingService {
        if(bookings.isEmpty()) {
     	  booking.setBookingId("RB00000001");
     	  booking.setUser(user);
-    	  booking.setBus(new Bus(busId,"",0,0,0.0,"","","","","",""));
+    	  booking.setBus(new Bus(busId,"",0,0,0.0,"","","","","","",""));
     	  booking.setTotalFare(totalFare);
     	  bookingRepo.save(booking);	
     	  return "RB00000001";
@@ -80,7 +89,7 @@ public class BookingService {
     	   
     	   booking.setBookingId(newBookingId);
     	   booking.setUser(user);
-    	   booking.setBus(new Bus(busId,"",0,0,0.0,"","","","","",""));
+    	   booking.setBus(new Bus(busId,"",0,0,0.0,"","","","","","",""));
     	   booking.setTotalFare(totalFare);
     	   bookingRepo.save(booking);
     	   return newBookingId;   
@@ -90,24 +99,54 @@ public class BookingService {
        
         
 	}
-   public  String  addTravellerDetails(String bookingId,Iterable<TravellerDetails> travellers){
+    public  String  addTravellerDetails(String bookingId,Iterable<TravellerDetails> travellers) throws SeatBookedException, SameSeatException {
+    	    busSeatDetailsService.addbusSeatDetails(travellers, bookingId);
+    	
     	  for(TravellerDetails traveller:travellers) {
     		   traveller.setBooking(new Booking(bookingId,null, null, "","",0.0,0));
     	  }
     	  travellerRepo.saveAll(travellers);
-    	  return bookingId;
+    	  String table="<html><body><table width='100%' border='1' align='center'>"
+          //+ "<tr align='center'>"
+          + "<th>Seat No</th>"
+          + "<th>TravellerName</th>"
+          + "<th>Age</th>"
+          + "<th>Gender</th>"
+          + "</tr>";
+
+    	  for(TravellerDetails traveller:travellers) {
+              table+="<tr><td>" + traveller.getSeatNo()+ "</td>"
+                          + "<td>" + traveller.getTravellerName() + "</td>"
+                          + "<td>" + traveller.getAge() + "</td>"
+                          + "<td>" + traveller.getGender() + "</td></tr>";
+
+          }
+    	  table+="</table></body></html>";
+
+    	  /*String travellerDetailsTable="<html><body><table border-collapse:collapse><caption>TravellerDetails</caption>"
+			                            +"<tr><th><SeatNo></th><th>TravellerName</th><th>Age</th><th>Gender</th></tr>";
+	     for(TravellerDetails traveller:travellers) {
+		 travellerDetailsTable+="<tr><td>"+traveller.getSeatNo()+"</td>"
+		  		      + "<td>"+traveller.getTravellerName()+"</td>"
+		  		      +"<td>"+traveller.getAge()+"</td>"
+		  		      +"<td>"+traveller.getGender()+"</td></tr>";
+	     }*/
+    	  /*String message=bookingConfirmation(travellers, bookingId);
+    	  return "your bookingId is "+bookingId+""+message+"";*/
+	    // return "your BookingId is "+bookingId+""
+	    		 
+	   return bookingConfirmation(table,bookingId)+"your BookingId is "+bookingId+"";
     	  
     }
     public List<Booking> getBookingsOfUser(String userId){
     	return bookingRepo.findByUserUserId(userId);
     	 
      }
-    //
     
-     /*bookingConfirmation(Iterable<TravellerDetails> traveller,String bookingId){
+    
+   public String bookingConfirmation(String  table,String bookingId){
     	 Properties properties=new Properties();
     	 properties.put("mail.smtp.host", "smtp.gmail.com");
-		 properties.put("mail.smtp.auth", "true");
 		 properties.put("mail.smtp.starttls.enable", "true");
 		 properties.put("mail.smtp.auth", "true");
 		 properties.put("mail.smtp.port", "587");
@@ -117,13 +156,30 @@ public class BookingService {
                          return 	new  javax.mail.PasswordAuthentication("rakshithsourav@gmail.com","rakshith@24");
 				         }
         	});
-		 
+		 try {
 		 MimeMessage message=new MimeMessage(session);
-		 message.setRecipient(Message.RecipientType.TO, new InternetAddress("madhumadhan2468@gmail.com"));
+		 message.setRecipient(Message.RecipientType.TO, new InternetAddress("rakshithsourav@gmail.com"));
+		//need to get useremail 
 		 message.setSubject("Booking Confirmation ");
+		 String  bookingMessage="Thanks for Booking your booking Id is "+bookingId+"";
+		 message.setContent(table,"text/html");
+		 message.setText(bookingMessage);
+		 Transport.send(message);
 		 
-     }*/
-     
+		 }catch (AddressException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+		 } catch (MessagingException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+		 }     
+		    return "The Details of the booking has been sent to your Mail";
+     }
+     public String rescheduleBooking(Date rescheduledDate,String bookingId) {
+    	 bookingRepo.updateTravellingDate(rescheduledDate, bookingId);
+    	 return "Your journey is rescheduled to "+rescheduledDate.toString()+"";
+    	 
+     }
      
 
 }

@@ -12,6 +12,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.validation.constraints.NotEmpty;
 
 import org.hibernate.annotations.Check;
 
@@ -30,7 +31,7 @@ public class Bus {
 
 	//@Column(columnDefinition = "CHECK(busType IN('AC','NON-AC'))")
 	@NotNull
-	@Check(constraints = "busType IN('AC','NONAC')")
+	@Check(constraints = "busType IN('Sleeper','SemiSleeper')")
 	private String busType;
 	@NotNull
 	private int totalSeats;
@@ -38,13 +39,14 @@ public class Bus {
 	private int seatsRemaining;
 	@NotNull
 	private double busFarePerKm;
-	@JsonFormat(pattern = "HH:MM")
+	/*@JsonFormat(pattern = "HH:MM")
 	private String  departure;
 	@JsonFormat(pattern = "HH:MM")
 	private String arrival;
-	private String duration;
+	private String duration;*/
 	//@Column(columnDefinition = "CHECK(wifi IN('YES','NO'))")
 	@Check(constraints = "wifi IN('YES','NO')")
+	@NotEmpty
 	private String wifi;
     //@Column(columnDefinition = "CHECK(watterBottle IN('YES','NO'))")
 	@Check(constraints = "watterBottle IN('AC','NONAC')")
@@ -52,6 +54,9 @@ public class Bus {
     //@Column(columnDefinition = "CHECK(chargingPoint IN('YES','NO'))")
     @Check(constraints = "chargingPoint IN('AC','NONAC')")
 	private String chargingPoint;
+    
+    @Check(constraints = "AC IN('YES','NO')")
+   	private String ac;
 	
 	@ManyToOne
 	@JoinColumn(name="agency_id")
@@ -71,19 +76,20 @@ public class Bus {
 	private Set<BusRouteDetails> busRouteDetails=new HashSet<>();
 
 	public Bus(String busId, String busType, int totalSeats, int seatsRemaining, double busFarePerKm, String departure,
-			String arrival, String duration, String wifi, String watterBottle, String chargingPoint) {
+			String arrival, String duration, String wifi, String watterBottle, String chargingPoint,String ac) {
 		super();
 		this.busId = busId;
 		this.busType = busType;
 		this.totalSeats = totalSeats;
 		this.seatsRemaining = seatsRemaining;
 		this.busFarePerKm = busFarePerKm;
-		this.departure = departure;
+		/*this.departure = departure;
 		this.arrival = arrival;
-		this.duration = duration;
+		this.duration = duration;*/
 		this.wifi = wifi;
 		this.watterBottle = watterBottle;
 		this.chargingPoint = chargingPoint;
+		this.ac=ac;
 	}
     public Bus() {
     	
@@ -128,7 +134,7 @@ public class Bus {
 		this.busFarePerKm = busFarePerKm;
 	}
 
-	public String getDeparture() {
+	/*public String getDeparture() {
 		return departure;
 	}
 
@@ -150,7 +156,7 @@ public class Bus {
 
 	public void setDuration(String duration) {
 		this.duration = duration;
-	}
+	}*/
 
 	public String getWifi() {
 		return wifi;
@@ -182,6 +188,12 @@ public class Bus {
 
 	public void setAgency(Agency agency) {
 		this.agency = agency;
+	}
+	public String getAc() {
+		return ac;
+	}
+	public void setAc(String ac) {
+		this.ac = ac;
 	}
 
 

@@ -6,6 +6,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.validation.constraints.NotEmpty;
 
 import com.sun.istack.NotNull;
@@ -38,6 +39,9 @@ public class BusRouteDetails {
 	@NotEmpty
 	@NotNull
 	private String duration;
+	
+	@OneToOne
+	private BusSeatDetails busseatDetails;
 
 	
 
@@ -83,7 +87,6 @@ public class BusRouteDetails {
 
 	public BusRouteDetails(int busRouteId, Bus bus, Route route, @NotEmpty String departure,
 			@NotEmpty @NotEmpty String arrival, @NotEmpty String duration) {
-		super();
 		this.busRouteId = busRouteId;
 		this.bus = bus;
 		this.route = route;

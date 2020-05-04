@@ -1,12 +1,19 @@
 package com.bus.ibm.project.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import com.bus.ibm.project.exception.AddAgencyException;
+import com.bus.ibm.project.exception.BusAlreadyExistsException;
 import com.bus.ibm.project.model.Agency;
 import com.bus.ibm.project.model.Bus;
 import com.bus.ibm.project.model.BusRouteDetails;
@@ -19,21 +26,26 @@ import com.bus.ibm.project.repository.RouteRepository;
 @Service
 public class BusService {
 	@Autowired
-	BusRepository busRepo;
+	BusRepository     busRepo;
 	/*@Autowired
 	RouteRepository routeRepo;
 	@Autowired
 	AgencyRepository agencyRepo;*/
 	@Autowired
-	AgencyService agencyService;
+	AgencyService     agencyService;
 	@Autowired
-	RouteService routeService;
+	RouteService      routeService;
 	@Autowired
-	BusRouteService busRouteService;
+	BusRouteService    busRouteService;
 	@Autowired
 	BusRouteRepository busRouteRepo;
-	
-    public void  addBus(Bus bus) {
+	@Autowired
+	BusSeatDetailsService busSeatDetailService;
+	@Autowired
+	EntityManager entitymanager;
+	@Transactional
+    public void  addBus(Bus bus) throws BusAlreadyExistsException, AddAgencyException {
+		
 		/*Agency agency =new Agency();
 		Route route=new Route();
 		agency.setAgencyId("R13");
@@ -46,8 +58,19 @@ public class BusService {
 		routeRepo.save(route);
 	    bus.setAgency(agencyService.addAgency(bus));
 	    bus.setRoute(routeService.addRoute(bus));*/
-	    busRepo.save(bus);
-	}
+    	Bus existingBus=busRepo.getBus(bus.getBusId());
+    	if(existingBus!=null) {
+    		throw new BusAlreadyExistsException("Bus with BusNumber "+bus.getBusId()+" is already added");
+    	}else {
+    		try {
+	          busRepo.save(bus);
+    		}catch(javax.persistence.EntityNotFoundException exception) {
+    			entitymanager.getTransaction().rollback();
+    			throw new AddAgencyException("Agency with name "+bus.getAgency().getAgencyName()+" is not added");
+    		}
+	    
+	    }
+    }
 	
     public Optional<Bus> getBus(String id){
         	return  busRepo.findById(id);
@@ -63,6 +86,11 @@ public class BusService {
     	 if(busRouteDetails.isEmpty()) {
     		 busRepo.deleteById(busId);
     	 }else {
+    		 List<Integer>busRouteId=new ArrayList<>();
+    		 for(BusRouteDetails existingBusRouteDetails:busRouteDetails) {
+    			 busRouteId.add(existingBusRouteDetails.getBusRouteId());
+    		 }
+    	 busSeatDetailService.DeleteBusSeatDetails(busRouteId);
     	 busRouteService.deleteBusRouteDetails(busId);
     	 busRepo.deleteById(busId);
          }
