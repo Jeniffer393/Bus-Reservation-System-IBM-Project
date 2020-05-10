@@ -57,16 +57,16 @@ public class UserController {
 	        
 	
 	//user booking the bus we generate the booking Id and bind it to path of request
-	@PostMapping("/bookbus/{userId}/{busId}")
-	public String bookBus(@PathVariable String userId,@RequestBody Booking booking,@PathVariable String busId){
-                  return bookingService.bookSeats(userId, booking,busId);
+	@PostMapping("/bookbus/{userId}/{busRouteId}")
+	public String bookBus(@PathVariable String userId,@RequestBody Booking booking,@PathVariable int busRouteId) throws SeatBookedException, SameSeatException{
+                  return bookingService.bookSeats(userId, booking,busRouteId);
 	}
 	
 	//after busbooking the user entering the details of travellers
-	@PostMapping("/bookbus/bookseats/{bookingId}")
+	/*@PostMapping("/bookbus/bookseats/{bookingId}")
 	public String bookTravellerSeats(@PathVariable String bookingId,@RequestBody Iterable<TravellerDetails>travellers) throws SeatBookedException, SameSeatException  {
 		 return bookingService.addTravellerDetails(bookingId,travellers);
-	}
+	}*/
 	
 	//user can get his bookings not the details regarding the passengers 
 	
@@ -85,7 +85,7 @@ public class UserController {
 	
 	//just to test the angular part
 	
-	@GetMapping("users/{userName}")
+	@GetMapping("/getuser/{userName}")
 	public String getUserName(@PathVariable String userName) {
 		 return userName;
 	}

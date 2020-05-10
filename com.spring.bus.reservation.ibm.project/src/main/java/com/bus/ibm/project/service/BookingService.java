@@ -22,11 +22,13 @@ import com.bus.ibm.project.exception.SameSeatException;
 import com.bus.ibm.project.exception.SeatBookedException;
 import com.bus.ibm.project.model.Booking;
 import com.bus.ibm.project.model.Bus;
+import com.bus.ibm.project.model.BusRouteDetails;
 import com.bus.ibm.project.model.Route;
 import com.bus.ibm.project.model.TravellerDetails;
 import com.bus.ibm.project.model.User;
 import com.bus.ibm.project.repository.BookingRepository;
 import com.bus.ibm.project.repository.BusRepository;
+import com.bus.ibm.project.repository.BusRouteRepository;
 import com.bus.ibm.project.repository.RouteRepository;
 import com.bus.ibm.project.repository.TravellerRepository;
 import com.bus.ibm.project.repository.UserRepository;
@@ -36,27 +38,41 @@ public class BookingService {
      
 	@Autowired
 	RouteRepository   routeRepo;
+	
 	@Autowired
 	BusRepository     busRepo;
+	
 	@Autowired
 	BookingRepository bookingRepo;
 	@Autowired
 	UserRepository    userRepo;
+	
 	@Autowired
 	TravellerRepository travellerRepo;
+	
 	@Autowired
 	BusSeatDetailsService busSeatDetailsService;
 	
+	@Autowired
+	BusRouteRepository busRouteRepo;
+	
+	
+	
 	   
-    public String bookSeats(String userId,Booking booking,String busId) {
+    public String bookSeats(String userId,Booking booking,int busRouteId) throws SeatBookedException, SameSeatException {
     	//just to demonstrate
+    	busSeatDetailsService.addbusSeatDetails(booking, busRouteId);
     	User user=new User();
     	user.setUserId(userId);
     	userRepo.save(user);
+    	//Optional<Bus> bus=busRepo.findById(busId);
+    	Optional<BusRouteDetails> busRouteDetails=busRouteRepo.findById(busRouteId);
+    	String busId  =busRouteDetails.get().getBus().getBusId();
     	Optional<Bus> bus=busRepo.findById(busId);
+    	
     	String routeId=routeRepo.getRouteId(booking.getPickUpPoint(),booking.getDroppingPoint());
     	Optional<Route> route=routeRepo.findById(routeId);
-    	double totalFare=bus.get().getBusFarePerKm()*booking.getBookedSeats()*route.get().getDistance();
+    	double totalFare=bus.get().getBusFarePerKm()*booking.getTotalSeatsBooked()*route.get().getDistance();
         
     	
     	
@@ -99,7 +115,7 @@ public class BookingService {
        
         
 	}
-    public  String  addTravellerDetails(String bookingId,Iterable<TravellerDetails> travellers) throws SeatBookedException, SameSeatException {
+   /* public  String  addTravellerDetails(String bookingId,Iterable<TravellerDetails> travellers) throws SeatBookedException, SameSeatException {
     	    busSeatDetailsService.addbusSeatDetails(travellers, bookingId);
     	
     	  for(TravellerDetails traveller:travellers) {
@@ -135,9 +151,9 @@ public class BookingService {
     	  return "your bookingId is "+bookingId+""+message+"";*/
 	    // return "your BookingId is "+bookingId+""
 	    		 
-	   return bookingConfirmation(table,bookingId)+"your BookingId is "+bookingId+"";
+	  /* return bookingConfirmation(table,bookingId)+"your BookingId is "+bookingId+"";
     	  
-    }
+    }*/
     public List<Booking> getBookingsOfUser(String userId){
     	return bookingRepo.findByUserUserId(userId);
     	 

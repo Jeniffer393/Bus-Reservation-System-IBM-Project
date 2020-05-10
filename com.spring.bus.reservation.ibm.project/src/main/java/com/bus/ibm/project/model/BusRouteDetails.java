@@ -1,5 +1,8 @@
 package com.bus.ibm.project.model;
 
+import java.sql.Time;
+import java.time.LocalDateTime;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -8,6 +11,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.validation.constraints.NotEmpty;
+
+import org.springframework.format.annotation.DateTimeFormat;
 
 import com.sun.istack.NotNull;
 
@@ -28,13 +33,12 @@ public class BusRouteDetails {
 	@JoinColumn(name="route_id")
 	private Route route;
 	
-	@NotEmpty
-	@NotNull
-	private String departure;
 	
-	@NotEmpty
-	@NotEmpty
-	private String arrival;
+	@DateTimeFormat
+	private LocalDateTime departure;
+	
+	@DateTimeFormat
+	private  LocalDateTime arrival;
 	
 	@NotEmpty
 	@NotNull
@@ -61,19 +65,19 @@ public class BusRouteDetails {
 		this.route = route;
 	}
 
-	public String getDeparture() {
+	public LocalDateTime getDeparture() {
 		return departure;
 	}
 
-	public void setDeparture(String departure) {
+	public void setDeparture(LocalDateTime departure) {
 		this.departure = departure;
 	}
 
-	public String getArrival() {
+	public LocalDateTime getArrival() {
 		return arrival;
 	}
 
-	public void setArrival(String arrival) {
+	public void setArrival(LocalDateTime arrival) {
 		this.arrival = arrival;
 	}
 
@@ -85,8 +89,8 @@ public class BusRouteDetails {
 		this.duration = duration;
 	}
 
-	public BusRouteDetails(int busRouteId, Bus bus, Route route, @NotEmpty String departure,
-			@NotEmpty @NotEmpty String arrival, @NotEmpty String duration) {
+	public BusRouteDetails(int busRouteId, Bus bus, Route route, @NotEmpty  LocalDateTime departure,
+			@NotEmpty @NotEmpty LocalDateTime arrival, @NotEmpty String duration) {
 		this.busRouteId = busRouteId;
 		this.bus = bus;
 		this.route = route;

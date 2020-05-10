@@ -20,9 +20,9 @@ public class TravellerDetails {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private int travellerId;
 	private String  seatNo;
-	@ManyToOne
+	/*@ManyToOne
 	@JoinColumn(name="booking_id")
-	private Booking booking;
+	private Booking booking;*/
 	
 	@NotNull
 	@NotEmpty
@@ -69,14 +69,14 @@ public class TravellerDetails {
 	}
 
 
-	public Booking getBooking() {
+	/*public Booking getBooking() {
 		return booking;
 	}
 
 
 	public void setBooking(Booking booking) {
 		this.booking = booking;
-	}
+	}*/
 
 
 	public String getTravellerName() {

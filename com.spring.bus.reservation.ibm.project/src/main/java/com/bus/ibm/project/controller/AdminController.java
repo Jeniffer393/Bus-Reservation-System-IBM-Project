@@ -48,9 +48,10 @@ public class AdminController {
 	BusSeatDetailsService busSeatDetailsService;
 	//adding the bus
 	@PostMapping("/addbus")
-	void  addBus(@RequestBody Bus bus) throws BusAlreadyExistsException, AddAgencyException {
+	String  addBus(@RequestBody Bus bus) throws BusAlreadyExistsException, AddAgencyException {
 		try {
 		service.addBus(bus);
+		return "bus added Sucessfuuly";
 		}catch(AddAgencyException exception) {
 			throw new AddAgencyException("agency is not found");
 		}
@@ -90,8 +91,9 @@ public class AdminController {
 	}
 	//adding the route to bus
 	@PostMapping("/busRoute")
-	void addBusToRoute(@RequestBody BusRouteDetails busRoute) throws BusRouteException{
+	String addBusToRoute(@RequestBody BusRouteDetails busRoute) throws BusRouteException{
 		busRouteService.addBusToRoute(busRoute);
+		return "trip added Sucessfully";
 	}
 	//get the allactive buses
 	@GetMapping("/activebuses")

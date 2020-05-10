@@ -1,8 +1,8 @@
 package com.bus.ibm.project.model;
 
+import java.sql.Date;
 import java.sql.Timestamp;
 import java.time.LocalTime;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -38,8 +38,8 @@ public class Booking {
 	@JoinColumn(name="bus_id")
 	private Bus bus;
 	
-	@OneToMany
-	private Set<TravellerDetails> bookingDetails=new HashSet<>();
+	/*@OneToMany
+	private Set<TravellerDetails> bookingDetails=new HashSet<>();*/
 	
 	@UpdateTimestamp
 	private Timestamp bookedDate;
@@ -57,7 +57,9 @@ public class Booking {
 	
 	private double totalFare;
 	
-	private int bookedSeats;
+	private int  totalSeatsBooked;
+	
+	private String bookedSeats[];
 
 	public String getBookingId() {
 		return bookingId;
@@ -74,12 +76,12 @@ public class Booking {
 	public void setUser(User user) {
 		this.user = user;
 	}
-    @JsonIgnore
+   /* @JsonIgnore
 	public Set<TravellerDetails> getBookingDetails() {
 		return bookingDetails;
 	}
 
-	public void setBookingDetails(Set<TravellerDetails> bookingDetails) {
+	/*public void setBookingDetails(Set<TravellerDetails> bookingDetails) {
 		this.bookingDetails = bookingDetails;
 	}
     
@@ -132,13 +134,13 @@ public class Booking {
 		this.totalFare = totalFare;
 	}
 
-	public int getBookedSeats() {
+	/*public int getBookedSeats() {
 		return bookedSeats;
 	}
 
 	public void setBookedSeats(int bookedSeats) {
 		this.bookedSeats = bookedSeats;
-	}
+	}*/
 
 	public Bus getBus() {
 		return bus;
@@ -148,9 +150,24 @@ public class Booking {
 		this.bus = bus;
 	}
 	
-	
+	public Booking(@Length(max = 10) String bookingId, User user, Bus bus, Timestamp bookedDate, Date travellingDate,
+			@NotEmpty String pickUpPoint, @NotEmpty String droppingPoint, double totalFare, int totalSeatsBooked,
+			String[] bookedSeats) {
+		super();
+		this.bookingId = bookingId;
+		this.user = user;
+		this.bus = bus;
+		this.bookedDate = bookedDate;
+		this.travellingDate = travellingDate;
+		this.pickUpPoint = pickUpPoint;
+		this.droppingPoint = droppingPoint;
+		this.totalFare = totalFare;
+		this.totalSeatsBooked = totalSeatsBooked;
+		this.bookedSeats = bookedSeats;
+	}
 
-	public Booking(String bookingId, Timestamp bookedDate, Date travellingDate, @NotEmpty String pickUpPoint,
+
+	/*public Booking(String bookingId, Timestamp bookedDate, Date travellingDate, @NotEmpty String pickUpPoint,
 			@NotEmpty String droppingPoint, double totalFare, int bookedSeats) {
 		this.bookingId = bookingId;
 		this.bookedDate = bookedDate;
@@ -159,10 +176,31 @@ public class Booking {
 		this.droppingPoint = droppingPoint;
 		this.totalFare = totalFare;
 		this.bookedSeats = bookedSeats;
-	}
+	}*/
 	public Booking() {
 		
 	}
+
+	
+
+	public String[] getBookedSeats() {
+		return bookedSeats;
+	}
+
+	public void setBookedSeats(String[] bookedSeats) {
+		this.bookedSeats = bookedSeats;
+	}
+
+	
+	public int getTotalSeatsBooked() {
+		return totalSeatsBooked;
+	}
+
+	public void setTotalSeatsBooked(int totalSeatsBooked) {
+		this.totalSeatsBooked = totalSeatsBooked;
+	}
+
+	
     
 	
 	

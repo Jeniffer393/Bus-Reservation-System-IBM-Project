@@ -35,8 +35,8 @@ public class Bus {
 	private String busType;
 	@NotNull
 	private int totalSeats;
-	@NotNull
-	private int seatsRemaining;
+	/*@NotNull
+	private int seatsRemaining;*/
 	@NotNull
 	private double busFarePerKm;
 	/*@JsonFormat(pattern = "HH:MM")
@@ -81,7 +81,7 @@ public class Bus {
 		this.busId = busId;
 		this.busType = busType;
 		this.totalSeats = totalSeats;
-		this.seatsRemaining = seatsRemaining;
+		/*this.seatsRemaining = seatsRemaining;*/
 		this.busFarePerKm = busFarePerKm;
 		/*this.departure = departure;
 		this.arrival = arrival;
@@ -118,13 +118,13 @@ public class Bus {
 		this.totalSeats = toatalSeats;
 	}
 
-	public int getSeatsRemaining() {
+	/*public int getSeatsRemaining() {
 		return seatsRemaining;
 	}
 
 	public void setSeatsRemaining(int seatsRemaining) {
 		this.seatsRemaining = seatsRemaining;
-	}
+	}*/
 
 	public double getBusFarePerKm() {
 		return busFarePerKm;
