@@ -44,7 +44,7 @@ public class Booking {
 	@UpdateTimestamp
 	private Timestamp bookedDate;
 	
-	@JsonFormat(pattern = "DD/MM/YYYY")
+	
 	private Date travellingDate;
 	
 	@NotNull

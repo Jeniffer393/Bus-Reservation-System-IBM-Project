@@ -72,7 +72,7 @@ public class BookingService {
     	
     	String routeId=routeRepo.getRouteId(booking.getPickUpPoint(),booking.getDroppingPoint());
     	Optional<Route> route=routeRepo.findById(routeId);
-    	double totalFare=bus.get().getBusFarePerKm()*booking.getTotalSeatsBooked()*route.get().getDistance();
+    	double totalFare=bus.get().getBusFarePerKm()*booking.getBookedSeats().length*route.get().getDistance();
         
     	
     	
@@ -82,6 +82,7 @@ public class BookingService {
     	  booking.setUser(user);
     	  booking.setBus(new Bus(busId,"",0,0,0.0,"","","","","","",""));
     	  booking.setTotalFare(totalFare);
+    	  booking.setTotalSeatsBooked(booking.getBookedSeats().length);
     	  bookingRepo.save(booking);	
     	  return "RB00000001";
        }else {
@@ -107,6 +108,7 @@ public class BookingService {
     	   booking.setUser(user);
     	   booking.setBus(new Bus(busId,"",0,0,0.0,"","","","","","",""));
     	   booking.setTotalFare(totalFare);
+    	   booking.setTotalSeatsBooked(booking.getBookedSeats().length);
     	   bookingRepo.save(booking);
     	   return newBookingId;   
     	   //this bookingId need to be binded in frontEnd

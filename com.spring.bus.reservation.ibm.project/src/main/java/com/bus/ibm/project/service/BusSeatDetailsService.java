@@ -132,7 +132,7 @@ public class BusSeatDetailsService {
 	     for(String busSeats :booking.getBookedSeats()) {
 	    	if(busSeatDetailRepo.findByBusRouteDetailsBusRouteId(busRouteId).getBookedSeatsNumbers().contains(busSeats)) {
 	    		//bookingRepo.deleteById(bookingId);//user needs to be redirected to again booking page
-	    		throw new SeatBookedException("Seat No with"+busSeats+"is already booked");
+	    		throw new SeatBookedException("Seat No with "+busSeats+ "is already booked");
 	    	 }else {
 
 	    		   seats.add(busSeats);

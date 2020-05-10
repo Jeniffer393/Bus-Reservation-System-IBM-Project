@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.bus.ibm.project.exception.AddAgencyException;
@@ -107,8 +108,10 @@ public class AdminController {
 	}
 	//delete the bus
 	@DeleteMapping("/bus/{busId}")
-	void deleteBus(@PathVariable String busId) {
+	 String  deleteBus(@PathVariable String busId) {
 		service.deleteBus(busId);
+		return "Bus Deleted Suceesfully";
+		
 	}
 	//updating the condtions of bus like change of fare,change of amenities
 	@PutMapping("/bus/{busId}")
